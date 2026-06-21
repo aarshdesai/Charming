@@ -131,7 +131,12 @@ export function BaseCanvas({
       {/* Slots: wrap on mobile, single arced row on desktop */}
       <div className="relative w-full max-w-2xl">
         <ChainArc count={base.maxCharms} />
-        <div className="relative z-10 grid grid-cols-4 justify-items-center gap-y-6 gap-x-2 md:flex md:flex-nowrap md:items-end md:justify-around md:gap-0 w-full md:pb-6">
+        <div
+          // Inline grid template guarantees 4 mobile columns regardless of
+          // Tailwind JIT; md:flex overrides display so it's inert on desktop.
+          style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}
+          className="relative z-10 grid justify-items-center gap-y-6 gap-x-2 md:flex md:flex-nowrap md:items-end md:justify-around md:gap-0 w-full md:pb-6"
+        >
           {slots.map((charm, i) => (
             <Slot
               key={i}
