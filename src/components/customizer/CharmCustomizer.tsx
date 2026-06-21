@@ -136,6 +136,7 @@ export function CharmCustomizer() {
   return (
     <DndContext
       sensors={sensors}
+      modifiers={[snapCenterToCursor]}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
@@ -176,7 +177,7 @@ export function CharmCustomizer() {
         <OrderSummary variant="bar" base={base} slots={visibleSlots} />
       </div>
 
-      <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
+      <DragOverlay dropAnimation={null}>
         {overlayCharm && (
           <div className="w-full h-full flex items-center justify-center pointer-events-none">
             <motion.div
