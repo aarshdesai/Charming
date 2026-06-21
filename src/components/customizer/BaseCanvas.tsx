@@ -121,14 +121,14 @@ function HangSlot({
             initial={false}
             className="flex flex-col items-center"
           >
-            <div className="w-px h-2.5 bg-[#123718]/15" />
+            <div className="w-px h-2.5 bg-[#F3E8DC]/25" />
             <div
               style={{ width: size, height: size }}
               className={`rounded-full border border-dashed flex items-center justify-center transition-colors ${
-                highlight ? "border-[#882121] bg-[#882121]/5" : "border-[#123718]/20"
+                highlight ? "border-[#F3E8DC] bg-[#F3E8DC]/10" : "border-[#F3E8DC]/30"
               }`}
             >
-              <span className="text-[#123718]/20 text-lg leading-none">+</span>
+              <span className="text-[#F3E8DC]/40 text-lg leading-none">+</span>
             </div>
           </motion.div>
         )}
@@ -202,12 +202,22 @@ export function BaseCanvas({
   const size = N >= 6 ? 50 : N >= 5 ? 58 : 66;
 
   return (
-    <div className="shrink-0 md:flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-8">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-[#123718]/30 mb-10 md:mb-14">
+    <div className="relative overflow-hidden shrink-0 md:flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-8">
+      {/* Brand satin "photography stage" backdrop */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`${BASE_PATH}/images/satin-green.jpg`}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+      />
+      <div className="absolute inset-0 bg-[#0F2A1F]/35 pointer-events-none" />
+
+      <p className="relative z-10 text-[10px] uppercase tracking-[0.2em] text-[#F3E8DC]/50 mb-10 md:mb-14">
         {base.name}
       </p>
 
-      <div className="relative w-full max-w-3xl">
+      <div className="relative z-10 w-full max-w-3xl">
         <Chain count={N} ringY={ringY} sag={sag} />
         <div
           className="relative flex justify-around items-start px-1"
@@ -231,13 +241,13 @@ export function BaseCanvas({
       </div>
 
       {/* Slot counter */}
-      <p className="mt-10 text-[10px] tracking-[0.15em] text-[#123718]/30">
+      <p className="relative z-10 mt-10 text-[10px] tracking-[0.15em] text-[#F3E8DC]/40">
         <motion.span
           key={filled}
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className="text-[#123718]/60 font-medium"
+          className="text-[#F3E8DC]/80 font-medium"
         >
           {filled}
         </motion.span>
@@ -245,7 +255,7 @@ export function BaseCanvas({
       </p>
 
       {empty && (
-        <p className="mt-4 text-xs text-[#123718]/30 tracking-wide text-center px-6">
+        <p className="relative z-10 mt-4 text-xs text-[#F3E8DC]/45 tracking-wide text-center px-6">
           <span className="md:hidden">Tap a charm below to hang it on the chain</span>
           <span className="hidden md:inline">Drag charms from the left panel onto the chain above</span>
         </p>
