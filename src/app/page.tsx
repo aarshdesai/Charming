@@ -36,7 +36,7 @@ function Hero() {
           </div>
         </Reveal>
         <Reveal delay={0.26}>
-          <div className="mt-16 flex flex-wrap gap-4 md:gap-8 text-[10px] tracking-[0.2em] uppercase text-[#123718]/40">
+          <div className="mt-12 md:mt-16 flex flex-wrap items-center gap-x-4 gap-y-2 md:gap-x-8 text-[10px] tracking-[0.2em] uppercase text-[#123718]/40">
             <span>Chosen by you</span>
             <span className="text-[#882121]">+</span>
             <span>Charm bar experience</span>

@@ -91,6 +91,17 @@ export function CharmCustomizer() {
     });
   }
 
+  // Mobile-first: tap a charm to drop it into the first open slot.
+  function addToNextSlot(charm: Charm) {
+    setSlots((prev) => {
+      const next = [...prev];
+      const open = next.slice(0, base.maxCharms).findIndex((s) => s === null);
+      if (open === -1) return prev; // full
+      next[open] = charm;
+      return next;
+    });
+  }
+
   // Overlay charm shown while dragging
   const overlayCharm: Charm | null = (() => {
     if (!activeId) return null;
@@ -102,6 +113,7 @@ export function CharmCustomizer() {
   })();
 
   const visibleSlots = slots.slice(0, base.maxCharms);
+  const isFull = visibleSlots.every((s) => s !== null);
 
   return (
     <DndContext
@@ -110,21 +122,40 @@ export function CharmCustomizer() {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="grid md:grid-cols-[260px_1fr_260px] h-[calc(100dvh-4rem)]">
-        <CharmPalette activeId={activeId} />
+      {/* Mobile: single column (canvas + tray scroll, sticky order bar). Desktop: 3-col. */}
+      <div className="flex flex-col md:grid md:grid-cols-[260px_1fr_260px] h-[calc(100dvh-4rem)]">
+        {/* Desktop palette sidebar */}
+        <CharmPalette
+          variant="sidebar"
+          activeId={activeId}
+          onSelect={addToNextSlot}
+          full={isFull}
+        />
 
-        <div className="flex flex-col overflow-hidden">
+        {/* Center: base tabs + canvas, with mobile charm tray below */}
+        <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <BaseSelector selected={selectedBase} onChange={handleBaseChange} />
-          <BaseCanvas
-            base={base}
-            slots={visibleSlots}
-            onRemove={removeCharm}
-            activeId={activeId}
-            overSlotId={overSlotId}
-          />
+          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+            <BaseCanvas
+              base={base}
+              slots={visibleSlots}
+              onRemove={removeCharm}
+              overSlotId={overSlotId}
+            />
+            <CharmPalette
+              variant="tray"
+              activeId={activeId}
+              onSelect={addToNextSlot}
+              full={isFull}
+            />
+          </div>
         </div>
 
-        <OrderSummary base={base} slots={visibleSlots} />
+        {/* Desktop order sidebar */}
+        <OrderSummary variant="sidebar" base={base} slots={visibleSlots} />
+
+        {/* Mobile sticky order bar */}
+        <OrderSummary variant="bar" base={base} slots={visibleSlots} />
       </div>
 
       <DragOverlay dropAnimation={null}>

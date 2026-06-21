@@ -10,13 +10,14 @@ export function BaseSelector({
   onChange: (b: BaseType) => void;
 }) {
   return (
-    <div className="flex items-center gap-0 border-b border-[#123718]/10 px-6">
+    // Scrollable on narrow screens so tabs never clip; scrollbar hidden
+    <div className="flex items-center overflow-x-auto border-b border-[#123718]/10 px-4 md:px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {BASES.map((base) => (
         <button
           key={base.id}
           onClick={() => onChange(base.id)}
           className={`
-            py-4 px-5 text-[10px] uppercase tracking-[0.18em] transition-colors duration-150
+            shrink-0 py-4 px-3 md:px-5 text-[10px] uppercase tracking-[0.15em] whitespace-nowrap transition-colors duration-150
             ${
               selected === base.id
                 ? "text-[#123718] border-b-2 border-[#123718] -mb-px"
