@@ -5,25 +5,75 @@ import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { X } from "@phosphor-icons/react";
 import type { Base, Charm } from "@/lib/charms";
 
-/* A slot: droppable target + draggable when filled (desktop reorder). */
-function Slot({
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/* The charm itself, hanging from a pivot at its top (the bail).
+   - Appears with an underdamped spring on rotate => pendulum swing that settles.
+   - Then breathes with a slow infinite sway, like real jewelry on a chain. */
+function HangingCharm({ charm, size }: { charm: Charm; size: number }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      style={{ transformOrigin: "50% 0%" }}
+      initial={reduce ? false : { rotate: -26 }}
+      animate={{ rotate: 0 }}
+      transition={{ type: "spring", stiffness: 90, damping: 5, mass: 0.7 }}
+    >
+      <motion.div
+        style={{ transformOrigin: "50% 0%" }}
+        animate={reduce ? undefined : { rotate: [0, 1.4, 0, -1.4, 0] }}
+        transition={
+          reduce ? undefined : { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.7 }
+        }
+        className="flex flex-col items-center"
+      >
+        {/* short connector from the chain link down to the charm */}
+        <div className="w-px h-2.5 bg-[#c8a24a]" />
+        {charm.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`${BASE_PATH}${charm.image}`}
+            alt={charm.name}
+            draggable={false}
+            style={{ width: size, height: size }}
+            className="object-contain pointer-events-none drop-shadow-[0_4px_6px_rgba(15,42,31,0.35)]"
+          />
+        ) : (
+          <div
+            style={{ width: size, height: size }}
+            className="rounded-full bg-gradient-to-b from-[#1c4a25] to-[#0F2A1F] border border-[#c8a24a]/40 flex items-center justify-center text-[#F3E8DC] shadow-md"
+          >
+            <span style={{ fontSize: size * 0.42 }} className="leading-none">
+              {charm.emoji}
+            </span>
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* One hang point on the chain: a droppable target + draggable when filled. */
+function HangSlot({
   index,
   charm,
   onRemove,
   isOver,
+  size,
 }: {
   index: number;
   charm: Charm | null;
   onRemove: () => void;
   isOver: boolean;
+  size: number;
 }) {
-  const reduce = useReducedMotion();
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({
     id: `slot-${index}`,
     disabled: !charm,
     data: { fromSlot: index },
   });
-  const { setNodeRef: setDropRef } = useDroppable({ id: `slot-${index}` });
+  const { setNodeRef: setDropRef, isOver: dropOver } = useDroppable({ id: `slot-${index}` });
+  const highlight = isOver || dropOver;
 
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
@@ -41,75 +91,59 @@ function Slot({
       {...(charm ? listeners : {})}
       {...(charm ? attributes : {})}
       className={`
-        relative flex flex-col items-center gap-2 group shrink-0
+        relative flex flex-col items-center group shrink-0
         ${charm ? "md:cursor-grab md:active:cursor-grabbing" : ""}
         ${isDragging ? "opacity-30" : ""}
         touch-none select-none
       `}
     >
+      {/* Chain link / bail the charm hangs from */}
       <motion.div
-        animate={isOver ? { scale: 1.12 } : { scale: 1 }}
-        transition={{ type: "spring", stiffness: 400, damping: 22 }}
-        className={`
-          w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center
-          border-2 transition-colors duration-150
-          ${
-            charm
-              ? "bg-[#123718] border-[#123718] text-[#F3E8DC]"
-              : isOver
-              ? "bg-[#882121]/10 border-[#882121] border-dashed"
-              : "bg-[#F3E8DC] border-[#123718]/20 border-dashed hover:border-[#123718]/50"
-          }
-        `}
-      >
-        <AnimatePresence mode="popLayout">
-          {charm ? (
-            <motion.span
-              key={charm.id}
-              initial={reduce ? false : { scale: 0.2, rotate: -20 }}
-              animate={{ scale: 1, rotate: 0 }}
-              exit={reduce ? undefined : { scale: 0, rotate: 20 }}
-              transition={{ type: "spring", stiffness: 380, damping: 15 }}
-              className="text-2xl leading-none"
-            >
-              {charm.emoji}
-            </motion.span>
-          ) : (
-            <motion.span
-              key="empty"
-              initial={false}
-              className="text-[#123718]/20 text-lg leading-none"
-            >
-              +
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </motion.div>
+        animate={highlight ? { scale: 1.4 } : { scale: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 20 }}
+        className={`w-2.5 h-2.5 rounded-full border-2 z-10 ${
+          highlight ? "border-[#882121] bg-[#882121]/15" : "border-[#c8a24a] bg-[#F3E8DC]"
+        }`}
+      />
 
-      <AnimatePresence>
-        {charm && (
-          <motion.span
-            initial={reduce ? false : { opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: 0.15 }}
-            className="text-[9px] uppercase tracking-[0.15em] text-[#123718]/50 text-center leading-none max-w-[4rem] truncate"
+      <AnimatePresence mode="popLayout">
+        {charm ? (
+          <motion.div
+            key={charm.id}
+            exit={{ opacity: 0, scale: 0.6, transition: { duration: 0.15 } }}
           >
-            {charm.name}
-          </motion.span>
+            <HangingCharm charm={charm} size={size} />
+          </motion.div>
+        ) : (
+          // Empty hang point: faint dashed pendant placeholder
+          <motion.div
+            key="empty"
+            initial={false}
+            className="flex flex-col items-center"
+          >
+            <div className="w-px h-2.5 bg-[#123718]/15" />
+            <div
+              style={{ width: size, height: size }}
+              className={`rounded-full border border-dashed flex items-center justify-center transition-colors ${
+                highlight ? "border-[#882121] bg-[#882121]/5" : "border-[#123718]/20"
+              }`}
+            >
+              <span className="text-[#123718]/20 text-lg leading-none">+</span>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Remove — always visible on touch, hover-revealed on desktop */}
+      {/* Remove — visible on touch, hover-revealed on desktop */}
       <AnimatePresence>
         {charm && (
           <motion.button
-            initial={reduce ? false : { scale: 0 }}
+            initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             transition={{ type: "spring", stiffness: 500, damping: 20 }}
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
-            className="absolute -top-1.5 -right-1.5 w-6 h-6 md:w-5 md:h-5 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+            className="absolute top-3 -right-1 w-6 h-6 md:w-5 md:h-5 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-20"
             aria-label={`Remove ${charm.name}`}
           >
             <X size={11} weight="bold" />
@@ -120,26 +154,30 @@ function Slot({
   );
 }
 
-/* Decorative chain arc — desktop only (assumes a single row). */
-function ChainArc({ count }: { count: number }) {
-  const W = 600;
-  const H = 80;
-  const spacing = W / (count + 1);
-  const path = `M 20 ${H / 2} Q ${W / 2} 20 ${W - 20} ${H / 2}`;
+/* Draped chain drawn through the hang points. Height is fixed in px and the
+   viewBox y-axis matches 1:1 (preserveAspectRatio none only stretches x), so
+   the SVG curve lines up with the DOM links that sit on it. */
+function Chain({ count, ringY, sag }: { count: number; ringY: number; sag: number }) {
+  const pts = Array.from({ length: count }, (_, i) => {
+    const x = ((i + 0.5) / count) * 100;
+    const y = ringY + sag * Math.sin((Math.PI * (i + 0.5)) / count);
+    return { x, y };
+  });
+  const d =
+    `M 0 ${ringY} ` +
+    pts.map((p) => `L ${p.x} ${p.y}`).join(" ") +
+    ` L 100 ${ringY}`;
+  const h = ringY + sag + 4;
 
   return (
     <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="hidden md:block absolute inset-x-0 top-1/2 -translate-y-1/2 w-full h-16 pointer-events-none"
+      viewBox={`0 0 100 ${h}`}
       preserveAspectRatio="none"
+      style={{ height: h }}
+      className="absolute inset-x-0 top-0 w-full pointer-events-none"
     >
-      <path d={path} fill="none" stroke="#123718" strokeWidth="1.5" strokeOpacity="0.2" />
-      {Array.from({ length: count - 1 }).map((_, i) => {
-        const midX = (spacing * (i + 1) + spacing * (i + 2)) / 2;
-        const t = midX / W;
-        const arcY = H / 2 - Math.sin(Math.PI * t) * (H / 2 - 10);
-        return <circle key={i} cx={midX} cy={arcY} r="2" fill="#123718" fillOpacity="0.15" />;
-      })}
+      <path d={d} fill="none" stroke="#c8a24a" strokeWidth="2" strokeOpacity="0.7" />
+      <path d={d} fill="none" stroke="#fff" strokeWidth="0.5" strokeOpacity="0.5" />
     </svg>
   );
 }
@@ -158,35 +196,42 @@ export function BaseCanvas({
   const filled = slots.filter(Boolean).length;
   const empty = filled === 0;
 
+  const N = base.maxCharms;
+  const ringY = 10;
+  const sag = N <= 4 ? 16 : 24; // necklaces with more charms drape deeper
+  const size = N >= 6 ? 50 : N >= 5 ? 58 : 66;
+
   return (
     <div className="shrink-0 md:flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-8">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-[#123718]/30 mb-8 md:mb-12">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-[#123718]/30 mb-10 md:mb-14">
         {base.name}
       </p>
 
-      {/* Slots: wrap on mobile, single arced row on desktop */}
-      <div className="relative w-full max-w-2xl">
-        <ChainArc count={base.maxCharms} />
+      <div className="relative w-full max-w-3xl">
+        <Chain count={N} ringY={ringY} sag={sag} />
         <div
-          // Inline grid template guarantees 4 mobile columns regardless of
-          // Tailwind JIT; md:flex overrides display so it's inert on desktop.
-          style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}
-          className="relative z-10 grid justify-items-center gap-y-6 gap-x-2 md:flex md:flex-nowrap md:items-end md:justify-around md:gap-0 w-full md:pb-6"
+          className="relative flex justify-around items-start px-1"
+          style={{ paddingTop: ringY }}
         >
           {slots.map((charm, i) => (
-            <Slot
+            <div
               key={i}
-              index={i}
-              charm={charm}
-              onRemove={() => onRemove(i)}
-              isOver={overSlotId === `slot-${i}`}
-            />
+              style={{ marginTop: sag * Math.sin((Math.PI * (i + 0.5)) / N) }}
+            >
+              <HangSlot
+                index={i}
+                charm={charm}
+                onRemove={() => onRemove(i)}
+                isOver={overSlotId === `slot-${i}`}
+                size={size}
+              />
+            </div>
           ))}
         </div>
       </div>
 
       {/* Slot counter */}
-      <p className="mt-6 text-[10px] tracking-[0.15em] text-[#123718]/30">
+      <p className="mt-10 text-[10px] tracking-[0.15em] text-[#123718]/30">
         <motion.span
           key={filled}
           initial={{ opacity: 0, y: -6 }}
@@ -196,13 +241,13 @@ export function BaseCanvas({
         >
           {filled}
         </motion.span>
-        {" "}of {base.maxCharms} charms
+        {" "}of {N} charms
       </p>
 
       {empty && (
         <p className="mt-4 text-xs text-[#123718]/30 tracking-wide text-center px-6">
-          <span className="md:hidden">Tap a charm below to add it to a slot</span>
-          <span className="hidden md:inline">Drag charms from the left panel onto the slots above</span>
+          <span className="md:hidden">Tap a charm below to hang it on the chain</span>
+          <span className="hidden md:inline">Drag charms from the left panel onto the chain above</span>
         </p>
       )}
     </div>

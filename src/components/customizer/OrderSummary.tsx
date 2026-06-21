@@ -4,6 +4,16 @@ import { useState } from "react";
 import { ShoppingBag, CaretUp } from "@phosphor-icons/react";
 import type { Base, Charm } from "@/lib/charms";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function CharmGlyph({ charm }: { charm: Charm }) {
+  if (charm.image) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={`${BASE_PATH}${charm.image}`} alt={charm.name} className="w-5 h-5 object-contain" />;
+  }
+  return <span className="text-base leading-none">{charm.emoji}</span>;
+}
+
 // Shared checkout logic for both layouts.
 function useCheckout(base: Base, placed: Charm[]) {
   const [loading, setLoading] = useState(false);
@@ -72,7 +82,7 @@ export function OrderSummary({
             placed.map((charm, i) => (
               <div key={`${charm.id}-${i}`} className="flex justify-between items-center py-1.5">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-base leading-none">{charm.emoji}</span>
+                  <CharmGlyph charm={charm} />
                   <span className="text-xs text-[#123718]">{charm.name}</span>
                 </div>
                 <span className="text-xs text-[#123718]/60 tabular-nums">${charm.price}</span>
@@ -119,7 +129,7 @@ export function OrderSummary({
             placed.map((charm, i) => (
               <div key={`${charm.id}-${i}`} className="flex justify-between items-center">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-base leading-none">{charm.emoji}</span>
+                  <CharmGlyph charm={charm} />
                   <span className="text-xs text-[#123718]">{charm.name}</span>
                 </div>
                 <span className="text-xs text-[#123718]/60 tabular-nums">${charm.price}</span>

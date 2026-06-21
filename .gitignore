@@ -45,3 +45,7 @@ next-env.d.ts
 
 # corrupt local lockfile — CI resolves fresh
 package-lock.json
+
+# local higgsfield test outputs
+test-assets/
+ig-refs/

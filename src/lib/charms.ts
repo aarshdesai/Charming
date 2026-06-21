@@ -7,6 +7,8 @@ export interface Charm {
   price: number;
   emoji: string;
   description: string;
+  /** Transparent PNG cutout. When set, rendered instead of the emoji medallion. */
+  image?: string;
 }
 
 export type BaseType = "chain" | "bracelet" | "anklet";
@@ -20,6 +22,7 @@ export interface Base {
 }
 
 export const CHARMS: Charm[] = [
+  { id: "horseshoe-01", name: "Horseshoe", category: "symbols", price: 36, emoji: "U", description: "Pavé horseshoe, gold-set", image: "/charms/horseshoe.png" },
   { id: "star-01",    name: "Star",        category: "symbols", price: 18, emoji: "✦",  description: "Four-pointed star" },
   { id: "heart-01",   name: "Heart",       category: "symbols", price: 18, emoji: "♡",  description: "Open heart" },
   { id: "moon-01",    name: "Crescent",    category: "symbols", price: 22, emoji: "☽",  description: "Crescent moon" },

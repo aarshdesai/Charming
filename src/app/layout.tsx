@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body className="min-h-[100dvh] flex flex-col bg-[#F3E8DC] text-[#123718] antialiased">
         <Nav />
         <main className="flex-1 pt-16">{children}</main>

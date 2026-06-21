@@ -5,6 +5,23 @@ import { motion, useReducedMotion } from "motion/react";
 import { CHARMS, CATEGORY_LABELS, type Charm, type CharmCategory } from "@/lib/charms";
 
 const CATEGORY_ORDER: CharmCategory[] = ["symbols", "nature", "initials", "gems"];
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/* Charm glyph: transparent image when available, else the emoji. */
+function CharmGlyph({ charm }: { charm: Charm }) {
+  if (charm.image) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return (
+      <img
+        src={`${BASE_PATH}${charm.image}`}
+        alt={charm.name}
+        draggable={false}
+        className="w-7 h-7 object-contain pointer-events-none"
+      />
+    );
+  }
+  return <span className="text-2xl leading-none">{charm.emoji}</span>;
+}
 
 function byCategory() {
   return CATEGORY_ORDER.map((cat) => ({
@@ -65,7 +82,7 @@ function CharmChip({
         }
         whileTap={!disabled && !reduce ? { scale: 0.9 } : undefined}
       >
-        <span className="text-2xl leading-none">{charm.emoji}</span>
+        <CharmGlyph charm={charm} />
         <span className="text-[9px] uppercase tracking-[0.15em] text-[#123718]/50 group-hover:text-[#123718] transition-colors text-center leading-none whitespace-nowrap">
           {charm.name}
         </span>

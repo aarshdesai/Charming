@@ -15,6 +15,8 @@ import {
   type Modifier,
 } from "@dnd-kit/core";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 // Lock the dragged overlay's center to the pointer. Without this dnd-kit sizes
 // the overlay to the source chip and anchors it top-left, so the token floats
 // up-and-left of the cursor. (inlined: not worth a whole @dnd-kit/modifiers dep)
@@ -184,9 +186,20 @@ export function CharmCustomizer() {
               initial={{ scale: 1, rotate: 0 }}
               animate={{ scale: 1.2, rotate: 12 }}
               transition={{ type: "spring", stiffness: 300, damping: 18 }}
-              className="w-14 h-14 rounded-full bg-[#0F2A1F] text-[#F3E8DC] flex items-center justify-center text-2xl shadow-2xl"
+              className="w-14 h-14 flex items-center justify-center"
             >
-              {overlayCharm.emoji}
+              {overlayCharm.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={`${BASE_PATH}${overlayCharm.image}`}
+                  alt={overlayCharm.name}
+                  className="w-14 h-14 object-contain drop-shadow-xl"
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-[#0F2A1F] text-[#F3E8DC] flex items-center justify-center text-2xl shadow-2xl">
+                  {overlayCharm.emoji}
+                </div>
+              )}
             </motion.div>
           </div>
         )}
