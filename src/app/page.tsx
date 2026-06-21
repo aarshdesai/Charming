@@ -49,11 +49,11 @@ function Hero() {
       {/* Editorial photo — full height on desktop */}
       <div className="relative h-[70vw] md:h-[100dvh] bg-[#0F2A1F]">
         <Image
-          src="https://picsum.photos/seed/gold-charm-jewelry-delicate/800/1000"
-          alt="Handcrafted charm jewelry"
+          src="/images/ocean-necklace.jpg"
+          alt="Handcrafted ocean charm necklace on dark green satin"
           fill
           priority
-          className="object-cover opacity-80"
+          className="object-cover"
           sizes="(max-width: 768px) 100vw, 50vw"
         />
         <div className="absolute inset-0 bg-[#0F2A1F]/25 mix-blend-multiply" />
@@ -138,10 +138,10 @@ function BentoGrid() {
         {/* Nature: editorial photo */}
         <Reveal className="relative col-span-1 md:col-span-2 bg-[#123718] overflow-hidden">
           <Image
-            src="https://picsum.photos/seed/botanical-leaf-nature-minimal/800/400"
-            alt="Nature-inspired charms"
+            src="/images/charm-flatlay.jpg"
+            alt="Gold charm collection — horseshoe, butterfly, clover and more"
             fill
-            className="object-cover opacity-60"
+            className="object-cover opacity-70"
             sizes="(max-width: 768px) 50vw, 67vw"
           />
           <div className="absolute inset-0 flex flex-col justify-end p-6">
@@ -166,10 +166,10 @@ function BentoGrid() {
         {/* Gems: editorial photo */}
         <Reveal className="relative bg-[#123718] overflow-hidden">
           <Image
-            src="https://picsum.photos/seed/gemstone-ruby-sapphire-precious/600/400"
-            alt="Gemstone charms"
+            src="/images/horseshoe-necklace.jpg"
+            alt="Gold horseshoe charm necklace on dark green satin"
             fill
-            className="object-cover opacity-55"
+            className="object-cover opacity-75"
             sizes="(max-width: 768px) 50vw, 33vw"
           />
           <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-6">
@@ -192,10 +192,10 @@ function Story() {
         <Reveal>
           <div className="relative aspect-[4/5] bg-[#123718] overflow-hidden">
             <Image
-              src="https://picsum.photos/seed/jeweler-hands-crafting-sacramento/600/750"
-              alt="Crafting charms by hand in Sacramento"
+              src="/images/charm-flatlay.jpg"
+              alt="Charming Sacramento charm collection"
               fill
-              className="object-cover opacity-75"
+              className="object-cover opacity-80"
               sizes="(max-width: 768px) 100vw, 40vw"
             />
           </div>
