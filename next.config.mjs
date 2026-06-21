@@ -10,6 +10,11 @@ const nextConfig = {
     basePath: "/Charming",
     assetPrefix: "/Charming/",
   }),
+  // Embed the base path so components can prefix local /public images correctly
+  // in the static export where next/image can't apply assetPrefix automatically.
+  env: {
+    NEXT_PUBLIC_BASE_PATH: isPages ? "/Charming" : "",
+  },
   images: {
     // Static export can't run the image optimizer
     unoptimized: isPages,

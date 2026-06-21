@@ -49,7 +49,7 @@ function Hero() {
       {/* Editorial photo — full height on desktop */}
       <div className="relative h-[70vw] md:h-[100dvh] bg-[#0F2A1F]">
         <Image
-          src="/images/ocean-necklace.jpg"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/ocean-necklace.jpg`}
           alt="Handcrafted ocean charm necklace on dark green satin"
           fill
           priority
@@ -138,7 +138,7 @@ function BentoGrid() {
         {/* Nature: editorial photo */}
         <Reveal className="relative col-span-1 md:col-span-2 bg-[#123718] overflow-hidden">
           <Image
-            src="/images/charm-flatlay.jpg"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/charm-flatlay.jpg`}
             alt="Gold charm collection — horseshoe, butterfly, clover and more"
             fill
             className="object-cover opacity-70"
@@ -166,7 +166,7 @@ function BentoGrid() {
         {/* Gems: editorial photo */}
         <Reveal className="relative bg-[#123718] overflow-hidden">
           <Image
-            src="/images/horseshoe-necklace.jpg"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/horseshoe-necklace.jpg`}
             alt="Gold horseshoe charm necklace on dark green satin"
             fill
             className="object-cover opacity-75"
@@ -192,7 +192,7 @@ function Story() {
         <Reveal>
           <div className="relative aspect-[4/5] bg-[#123718] overflow-hidden">
             <Image
-              src="/images/charm-flatlay.jpg"
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/charm-flatlay.jpg`}
               alt="Charming Sacramento charm collection"
               fill
               className="object-cover opacity-80"
