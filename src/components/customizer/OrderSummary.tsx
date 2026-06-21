@@ -17,7 +17,14 @@ export function OrderSummary({
   const placed = slots.filter(Boolean) as Charm[];
   const total = base.price + placed.reduce((sum, c) => sum + c.price, 0);
 
+  // Static preview (GitHub Pages) has no server to create a Stripe session.
+  const isPreview = process.env.NEXT_PUBLIC_PREVIEW === "true";
+
   async function handleCheckout() {
+    if (isPreview) {
+      setError("Checkout is disabled in this preview. The full site processes payments via Stripe.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
