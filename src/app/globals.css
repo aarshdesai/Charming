@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Brand palette — extracted from Canva design DAGtY7PFeOY */
+  --color-cream:        #F3E8DC;
+  --color-cream-light:  #FFFAF4;
+  --color-green:        #123718;
+  --color-green-dark:   #0F2A1F;
+  --color-red:          #882121;
+  --color-sage:         #6F8A6A;
+  --color-stone:        #D8DBCE;
+
+  /* Typography */
+  --font-display: var(--font-cormorant);
+  --font-body:    var(--font-satoshi);
+}
+
+:root {
+  --background: #F3E8DC;
+  --foreground: #123718;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility: display type */
+.font-display {
+  font-family: var(--font-display), "Times New Roman", serif;
+}
+
+/* Selection color */
+::selection {
+  background: #123718;
+  color: #F3E8DC;
+}
