@@ -12,7 +12,24 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  type Modifier,
 } from "@dnd-kit/core";
+
+// Lock the dragged overlay's center to the pointer. Without this dnd-kit sizes
+// the overlay to the source chip and anchors it top-left, so the token floats
+// up-and-left of the cursor. (inlined: not worth a whole @dnd-kit/modifiers dep)
+const snapCenterToCursor: Modifier = ({ activatorEvent, draggingNodeRect, transform }) => {
+  if (!draggingNodeRect || !activatorEvent) return transform;
+  const e = activatorEvent as PointerEvent & { touches?: TouchList };
+  const x = e.touches?.[0]?.clientX ?? e.clientX;
+  const y = e.touches?.[0]?.clientY ?? e.clientY;
+  if (x == null || y == null) return transform;
+  return {
+    ...transform,
+    x: transform.x + x - draggingNodeRect.left - draggingNodeRect.width / 2,
+    y: transform.y + y - draggingNodeRect.top - draggingNodeRect.height / 2,
+  };
+};
 import { CHARMS, BASES, type Charm, type BaseType } from "@/lib/charms";
 import { CharmPalette } from "./CharmPalette";
 import { BaseCanvas } from "./BaseCanvas";
@@ -159,16 +176,18 @@ export function CharmCustomizer() {
         <OrderSummary variant="bar" base={base} slots={visibleSlots} />
       </div>
 
-      <DragOverlay dropAnimation={null}>
+      <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
         {overlayCharm && (
-          <motion.div
-            initial={{ scale: 1, rotate: 0 }}
-            animate={{ scale: 1.2, rotate: 12 }}
-            transition={{ type: "spring", stiffness: 300, damping: 18 }}
-            className="w-14 h-14 rounded-full bg-[#0F2A1F] text-[#F3E8DC] flex items-center justify-center text-2xl shadow-2xl pointer-events-none"
-          >
-            {overlayCharm.emoji}
-          </motion.div>
+          <div className="w-full h-full flex items-center justify-center pointer-events-none">
+            <motion.div
+              initial={{ scale: 1, rotate: 0 }}
+              animate={{ scale: 1.2, rotate: 12 }}
+              transition={{ type: "spring", stiffness: 300, damping: 18 }}
+              className="w-14 h-14 rounded-full bg-[#0F2A1F] text-[#F3E8DC] flex items-center justify-center text-2xl shadow-2xl"
+            >
+              {overlayCharm.emoji}
+            </motion.div>
+          </div>
         )}
       </DragOverlay>
     </DndContext>
