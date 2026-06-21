@@ -1,6 +1,7 @@
 "use client";
 
 import { useDroppable, useDraggable } from "@dnd-kit/core";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { X } from "@phosphor-icons/react";
 import type { Base, Charm } from "@/lib/charms";
 
@@ -16,6 +17,7 @@ function Slot({
   onRemove: () => void;
   isOver: boolean;
 }) {
+  const reduce = useReducedMotion();
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({
     id: `slot-${index}`,
     disabled: !charm,
@@ -45,10 +47,12 @@ function Slot({
         touch-none select-none
       `}
     >
-      <div
+      <motion.div
+        animate={isOver ? { scale: 1.12 } : { scale: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 22 }}
         className={`
           w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center
-          border-2 transition-all duration-150
+          border-2 transition-colors duration-150
           ${
             charm
               ? "bg-[#123718] border-[#123718] text-[#F3E8DC]"
@@ -58,29 +62,60 @@ function Slot({
           }
         `}
       >
-        {charm ? (
-          <span className="text-2xl leading-none">{charm.emoji}</span>
-        ) : (
-          <span className="text-[#123718]/20 text-lg leading-none">+</span>
-        )}
-      </div>
+        <AnimatePresence mode="popLayout">
+          {charm ? (
+            <motion.span
+              key={charm.id}
+              initial={reduce ? false : { scale: 0.2, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={reduce ? undefined : { scale: 0, rotate: 20 }}
+              transition={{ type: "spring", stiffness: 380, damping: 15 }}
+              className="text-2xl leading-none"
+            >
+              {charm.emoji}
+            </motion.span>
+          ) : (
+            <motion.span
+              key="empty"
+              initial={false}
+              className="text-[#123718]/20 text-lg leading-none"
+            >
+              +
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-      {charm && (
-        <span className="text-[9px] uppercase tracking-[0.15em] text-[#123718]/50 text-center leading-none max-w-[4rem] truncate">
-          {charm.name}
-        </span>
-      )}
+      <AnimatePresence>
+        {charm && (
+          <motion.span
+            initial={reduce ? false : { opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.15 }}
+            className="text-[9px] uppercase tracking-[0.15em] text-[#123718]/50 text-center leading-none max-w-[4rem] truncate"
+          >
+            {charm.name}
+          </motion.span>
+        )}
+      </AnimatePresence>
 
       {/* Remove — always visible on touch, hover-revealed on desktop */}
-      {charm && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onRemove(); }}
-          className="absolute -top-1.5 -right-1.5 w-6 h-6 md:w-5 md:h-5 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
-          aria-label={`Remove ${charm.name}`}
-        >
-          <X size={11} weight="bold" />
-        </button>
-      )}
+      <AnimatePresence>
+        {charm && (
+          <motion.button
+            initial={reduce ? false : { scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 20 }}
+            onClick={(e) => { e.stopPropagation(); onRemove(); }}
+            className="absolute -top-1.5 -right-1.5 w-6 h-6 md:w-5 md:h-5 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+            aria-label={`Remove ${charm.name}`}
+          >
+            <X size={11} weight="bold" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -120,7 +155,8 @@ export function BaseCanvas({
   onRemove: (i: number) => void;
   overSlotId: string | null;
 }) {
-  const empty = slots.every((s) => s === null);
+  const filled = slots.filter(Boolean).length;
+  const empty = filled === 0;
 
   return (
     <div className="shrink-0 md:flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-8">
@@ -149,8 +185,22 @@ export function BaseCanvas({
         </div>
       </div>
 
+      {/* Slot counter */}
+      <p className="mt-6 text-[10px] tracking-[0.15em] text-[#123718]/30">
+        <motion.span
+          key={filled}
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="text-[#123718]/60 font-medium"
+        >
+          {filled}
+        </motion.span>
+        {" "}of {base.maxCharms} charms
+      </p>
+
       {empty && (
-        <p className="mt-10 md:mt-12 text-xs text-[#123718]/30 tracking-wide text-center px-6">
+        <p className="mt-4 text-xs text-[#123718]/30 tracking-wide text-center px-6">
           <span className="md:hidden">Tap a charm below to add it to a slot</span>
           <span className="hidden md:inline">Drag charms from the left panel onto the slots above</span>
         </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "motion/react";
 import {
   DndContext,
   DragEndEvent,
@@ -160,9 +161,14 @@ export function CharmCustomizer() {
 
       <DragOverlay dropAnimation={null}>
         {overlayCharm && (
-          <div className="w-14 h-14 rounded-full bg-[#0F2A1F] text-[#F3E8DC] flex items-center justify-center text-2xl shadow-xl opacity-95 pointer-events-none">
+          <motion.div
+            initial={{ scale: 1, rotate: 0 }}
+            animate={{ scale: 1.2, rotate: 12 }}
+            transition={{ type: "spring", stiffness: 300, damping: 18 }}
+            className="w-14 h-14 rounded-full bg-[#0F2A1F] text-[#F3E8DC] flex items-center justify-center text-2xl shadow-2xl pointer-events-none"
+          >
             {overlayCharm.emoji}
-          </div>
+          </motion.div>
         )}
       </DragOverlay>
     </DndContext>

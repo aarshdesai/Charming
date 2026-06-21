@@ -1,6 +1,7 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
+import { motion, useReducedMotion } from "motion/react";
 import { CHARMS, CATEGORY_LABELS, type Charm, type CharmCategory } from "@/lib/charms";
 
 const CATEGORY_ORDER: CharmCategory[] = ["symbols", "nature", "initials", "gems"];
@@ -24,6 +25,7 @@ function CharmChip({
   disabled: boolean;
   onSelect: (c: Charm) => void;
 }) {
+  const reduce = useReducedMotion();
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette-${charm.id}`,
     data: { charm },
@@ -45,20 +47,30 @@ function CharmChip({
       aria-label={`Add ${charm.name}, $${charm.price}`}
       className={`
         group flex flex-col items-center gap-1.5 p-3 shrink-0
-        border border-[#123718]/10 transition-all duration-150
+        border border-[#123718]/10 transition-colors duration-150
         select-none touch-none
         ${disabled
           ? "opacity-30 cursor-not-allowed"
-          : "cursor-pointer hover:border-[#123718]/40 active:scale-[0.96] md:cursor-grab md:active:cursor-grabbing"}
+          : "cursor-pointer hover:border-[#123718]/40 md:cursor-grab md:active:cursor-grabbing"}
         ${isDragging ? "opacity-30" : ""}
         ${isActive && !isDragging ? "ring-1 ring-[#882121]" : ""}
       `}
     >
-      <span className="text-2xl leading-none">{charm.emoji}</span>
-      <span className="text-[9px] uppercase tracking-[0.15em] text-[#123718]/50 group-hover:text-[#123718] transition-colors text-center leading-none whitespace-nowrap">
-        {charm.name}
-      </span>
-      <span className="text-[9px] text-[#882121]/70">${charm.price}</span>
+      <motion.div
+        className="flex flex-col items-center gap-1.5"
+        whileHover={
+          !disabled && !isDragging && !reduce
+            ? { rotate: [0, -7, 7, -4, 4, 0], scale: 1.12, transition: { duration: 0.45 } }
+            : undefined
+        }
+        whileTap={!disabled && !reduce ? { scale: 0.9 } : undefined}
+      >
+        <span className="text-2xl leading-none">{charm.emoji}</span>
+        <span className="text-[9px] uppercase tracking-[0.15em] text-[#123718]/50 group-hover:text-[#123718] transition-colors text-center leading-none whitespace-nowrap">
+          {charm.name}
+        </span>
+        <span className="text-[9px] text-[#882121]/70">${charm.price}</span>
+      </motion.div>
     </button>
   );
 }
