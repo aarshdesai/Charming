@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  // The customizer is a full-height app screen; a footer under it just adds stray scroll.
+  if (usePathname() === "/customize") return null;
   return (
     <footer className="mt-auto border-t border-[#123718]/10 px-6 md:px-10 py-10">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">

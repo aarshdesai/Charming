@@ -12,7 +12,15 @@ export async function POST(req: NextRequest) {
     const base = BASES.find((b) => b.id === baseId);
     if (!base) return NextResponse.json({ error: "Invalid base." }, { status: 400 });
 
-    const charms = charmIds.map((id) => CHARMS.find((c) => c.id === id)).filter(Boolean);
+    // Reject rather than silently drop: a customer must never be charged for a
+    // different set of charms than the one they built.
+    if (!Array.isArray(charmIds) || charmIds.length === 0 || charmIds.length > base.maxCharms) {
+      return NextResponse.json({ error: "Invalid charm selection." }, { status: 400 });
+    }
+    const charms = charmIds.map((id) => CHARMS.find((c) => c.id === id));
+    if (charms.some((c) => !c)) {
+      return NextResponse.json({ error: "Unknown charm in selection." }, { status: 400 });
+    }
 
     const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000";
 

@@ -52,25 +52,29 @@ function HangingCharm({ charm, size }: { charm: Charm; size: string }) {
       >
         {/* short connector from the chain down to the charm bail */}
         <div className="w-px h-3 bg-[#c8a24a]" />
-        {charm.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={`${BASE_PATH}${charm.image}`}
-            alt={charm.name}
-            draggable={false}
-            style={{ width: size, height: size }}
-            className="object-contain pointer-events-none drop-shadow-[0_6px_8px_rgba(8,24,16,0.5)]"
-          />
-        ) : (
-          <div
-            style={{ width: size, height: size }}
-            className="rounded-full bg-gradient-to-b from-[#235c2e] to-[#0F2A1F] border-2 border-[#c8a24a]/60 flex items-center justify-center text-[#F3E8DC] shadow-[0_6px_8px_rgba(8,24,16,0.5)]"
-          >
-            <span style={{ fontSize: `calc(${size} * 0.42)` }} className="leading-none">
-              {charm.emoji}
-            </span>
-          </div>
-        )}
+        <div className="relative" style={{ width: size, height: size }}>
+          {charm.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={`${BASE_PATH}${charm.image}`}
+              alt={charm.name}
+              draggable={false}
+              style={{ width: size, height: size }}
+              className="object-contain pointer-events-none drop-shadow-[0_6px_8px_rgba(8,24,16,0.5)]"
+            />
+          ) : (
+            <div
+              style={{ width: size, height: size }}
+              className="rounded-full bg-gradient-to-b from-[#235c2e] to-[#0F2A1F] border-2 border-[#c8a24a]/60 flex items-center justify-center text-[#F3E8DC] shadow-[0_6px_8px_rgba(8,24,16,0.5)]"
+            >
+              <span style={{ fontSize: `calc(${size} * 0.42)` }} className="leading-none">
+                {charm.emoji}
+              </span>
+            </div>
+          )}
+          {/* one-shot gold sheen when the charm appears */}
+          <span aria-hidden className="charm-glint" />
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -34,7 +34,7 @@ function useCheckout(base: Base, placed: Charm[]) {
         body: JSON.stringify({ baseId: base.id, charmIds: placed.map((c) => c.id) }),
       });
       const { url, error: err } = await res.json();
-      if (err) throw new Error(err);
+      if (err || !url) throw new Error(err ?? "Checkout unavailable. Try again.");
       window.location.href = url;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");

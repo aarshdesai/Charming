@@ -18,7 +18,6 @@ const nextConfig = {
   images: {
     // Static export can't run the image optimizer
     unoptimized: isPages,
-    remotePatterns: [{ protocol: "https", hostname: "picsum.photos" }],
   },
 };
 

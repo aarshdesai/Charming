@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Charming Sacramento
 
-## Getting Started
+Custom charm-jewelry shop — pick a base (necklace / bracelet / anklet), drag charms onto it, check out with Stripe. Next.js 16 (App Router), React 19, Tailwind 4, dnd-kit, motion.
 
-First, run the development server:
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev   # http://localhost:3000 (webpack — Turbopack panics on the emoji in this repo's parent path)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local` (see `.env.local.example`):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `STRIPE_SECRET_KEY` — test key for the checkout API route
+- `NEXT_PUBLIC_URL` — origin fallback for Stripe redirect URLs
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Layout
 
-## Learn More
+- `src/app` — routes: landing, `/shop`, `/customize`, `/checkout/*`, `/api/checkout`
+- `src/components/customizer` — drag-and-drop charm customizer (canvas, palette, order summary)
+- `src/lib/charms.ts` — charm + base catalog (single source of truth for products/prices)
+- `public/charms/web` — 512px WebP charm cutouts served by the site
+- `charm-src/` — heavy source assets (2K renders, official inventory photos); not deployed
+- `Charming/` — Obsidian notes vault (gitignored)
 
-To learn more about Next.js, take a look at the following resources:
+## Deploys
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **GitHub Pages preview** — `.github/workflows/deploy-pages.yml`: static export under `/Charming`, checkout disabled (`NEXT_PUBLIC_PREVIEW=true`), API route stripped.
+- **Production (Vercel)** — full app with the Stripe checkout route.

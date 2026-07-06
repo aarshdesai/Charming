@@ -49,3 +49,10 @@ package-lock.json
 # local higgsfield test outputs
 test-assets/
 ig-refs/
+
+# obsidian notes vault (local only)
+/Charming/
+
+# heavy source assets + design references (not deployed)
+charm-src/
+design-mockups/

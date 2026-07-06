@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
+import { ParallaxImage } from "@/components/ui/ParallaxImage";
 
 /* ── Hero: asymmetric 50/50 split — text left, photo right */
 function Hero() {
@@ -46,18 +47,16 @@ function Hero() {
         </Reveal>
       </div>
 
-      {/* Editorial photo — full height on desktop */}
-      <div className="relative h-[70vw] md:h-[100dvh] bg-[#0F2A1F]">
-        <Image
-          src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/ocean-necklace.jpg`}
-          alt="Handcrafted ocean charm necklace on dark green satin"
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-        <div className="absolute inset-0 bg-[#0F2A1F]/25 mix-blend-multiply" />
-      </div>
+      {/* Editorial photo — full height on desktop, drifts with the cursor */}
+      <ParallaxImage
+        src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/ocean-necklace.jpg`}
+        alt="Handcrafted ocean charm necklace on dark green satin"
+        priority
+        depth={26}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="h-[70vw] md:h-[100dvh] bg-[#0F2A1F]"
+        overlay={<div className="absolute inset-0 bg-[#0F2A1F]/25 mix-blend-multiply" />}
+      />
     </section>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
   DndContext,
@@ -16,6 +16,7 @@ import {
 } from "@dnd-kit/core";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const STORAGE_KEY = "charming-design-v1";
 
 // Lock the dragged overlay's center to the pointer. Without this dnd-kit sizes
 // the overlay to the source chip and anchors it top-left, so the token floats
@@ -45,6 +46,34 @@ export function CharmCustomizer() {
   const [overSlotId, setOverSlotId] = useState<string | null>(null);
 
   const base = BASES.find((b) => b.id === selectedBase)!;
+
+  // Persist the design so leaving (e.g. a cancelled checkout) doesn't wipe it.
+  const hydrated = useRef(false);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as { base: BaseType; ids: (string | null)[] };
+        const savedBase = BASES.find((b) => b.id === saved.base);
+        if (savedBase && Array.isArray(saved.ids)) {
+          setSelectedBase(savedBase.id);
+          setSlots(
+            Array.from({ length: savedBase.maxCharms }, (_, i) =>
+              CHARMS.find((c) => c.id === saved.ids[i]) ?? null
+            )
+          );
+        }
+      }
+    } catch {} // corrupt storage → start fresh
+    hydrated.current = true;
+  }, []);
+  useEffect(() => {
+    if (!hydrated.current) return;
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ base: selectedBase, ids: slots.map((s) => s?.id ?? null) })
+    );
+  }, [selectedBase, slots]);
 
   // Require 8px of movement before drag starts — prevents accidental drags on click
   const sensors = useSensors(

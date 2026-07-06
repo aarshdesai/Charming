@@ -2,9 +2,8 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { motion, useReducedMotion } from "motion/react";
-import { CHARMS, CATEGORY_LABELS, type Charm, type CharmCategory } from "@/lib/charms";
+import { CHARMS, CATEGORY_LABELS, CATEGORY_ORDER, type Charm } from "@/lib/charms";
 
-const CATEGORY_ORDER: CharmCategory[] = ["symbols", "nature", "initials", "gems"];
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 /* Charm glyph: transparent image when available, else the emoji. */
