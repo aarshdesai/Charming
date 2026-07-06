@@ -35,15 +35,20 @@ function CharmChip({
   isActive,
   disabled,
   onSelect,
+  idPrefix,
 }: {
   charm: Charm;
   isActive: boolean;
   disabled: boolean;
   onSelect: (c: Charm) => void;
+  idPrefix: string;
 }) {
   const reduce = useReducedMotion();
+  // The palette mounts twice (desktop sidebar + mobile tray), so the draggable
+  // id must be variant-scoped: duplicate ids make dnd-kit measure the hidden
+  // twin (0×0), which kills the overlay and all drop collision.
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: `palette-${charm.id}`,
+    id: `${idPrefix}${charm.id}`,
     data: { charm },
     disabled,
   });
@@ -120,7 +125,8 @@ export function CharmPalette({ activeId, onSelect, full, variant }: PaletteProps
                   <CharmChip
                     key={charm.id}
                     charm={charm}
-                    isActive={activeId === `palette-${charm.id}`}
+                    isActive={activeId === `palette-${variant}-${charm.id}`}
+                    idPrefix={`palette-${variant}-`}
                     disabled={full}
                     onSelect={onSelect}
                   />
@@ -152,7 +158,8 @@ export function CharmPalette({ activeId, onSelect, full, variant }: PaletteProps
                 <CharmChip
                   key={charm.id}
                   charm={charm}
-                  isActive={activeId === `palette-${charm.id}`}
+                  isActive={activeId === `palette-${variant}-${charm.id}`}
+                  idPrefix={`palette-${variant}-`}
                   disabled={full}
                   onSelect={onSelect}
                 />

@@ -93,6 +93,7 @@ body {
   top: -10%;
   bottom: -10%;
   width: 60%;
+  opacity: 0; /* resting state — without this the sweep parks visible after its one run */
   background: linear-gradient(100deg, transparent, rgba(255, 250, 240, 0.9), transparent);
   animation: charm-glint 0.85s cubic-bezier(0.22, 1, 0.36, 1) 1;
 }

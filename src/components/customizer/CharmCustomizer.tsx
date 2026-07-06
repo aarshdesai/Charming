@@ -116,7 +116,7 @@ export function CharmCustomizer() {
     const aid = active.id as string;
 
     if (aid.startsWith("palette-")) {
-      const charmId = aid.replace("palette-", "");
+      const charmId = aid.replace(/^palette-(?:sidebar|tray)-/, "");
       const charm = CHARMS.find((c) => c.id === charmId);
       if (!charm) return;
       setSlots((prev) => {
@@ -158,7 +158,7 @@ export function CharmCustomizer() {
   const overlayCharm: Charm | null = (() => {
     if (!activeId) return null;
     if (activeId.startsWith("palette-"))
-      return CHARMS.find((c) => c.id === activeId.replace("palette-", "")) ?? null;
+      return CHARMS.find((c) => c.id === activeId.replace(/^palette-(?:sidebar|tray)-/, "")) ?? null;
     if (activeId.startsWith("slot-"))
       return slots[parseInt(activeId.replace("slot-", ""), 10)] ?? null;
     return null;
