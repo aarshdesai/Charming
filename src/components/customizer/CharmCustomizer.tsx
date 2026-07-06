@@ -56,6 +56,9 @@ export function CharmCustomizer() {
         const saved = JSON.parse(raw) as { base: BaseType; ids: (string | null)[] };
         const savedBase = BASES.find((b) => b.id === saved.base);
         if (savedBase && Array.isArray(saved.ids)) {
+          // One-time hydration from localStorage; runs once on mount, so the
+          // extra render can't cascade.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setSelectedBase(savedBase.id);
           setSlots(
             Array.from({ length: savedBase.maxCharms }, (_, i) =>

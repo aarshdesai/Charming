@@ -28,7 +28,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # Static export can't include a server-side API route. Drop it for the
       # preview build only; the source stays intact for the real deploy.

@@ -43,8 +43,6 @@ next-env.d.ts
 # tool caches
 .impeccable/
 
-# corrupt local lockfile — CI resolves fresh
-package-lock.json
 
 # local higgsfield test outputs
 test-assets/

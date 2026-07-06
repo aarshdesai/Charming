@@ -203,7 +203,7 @@ function Story() {
         <Reveal delay={0.12}>
           <blockquote>
             <p className="font-display text-[clamp(2rem,4.5vw,3.5rem)] text-[#F3E8DC] leading-[1.15] italic mb-8">
-              "Jewelry should feel like memory, not merchandise."
+              &ldquo;Jewelry should feel like memory, not merchandise.&rdquo;
             </p>
             <footer className="text-xs tracking-[0.18em] uppercase text-[#F3E8DC]/40">
               Founder, Charming Sacramento

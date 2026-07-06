@@ -9,8 +9,8 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 /* Charm glyph: transparent image when available, else the emoji. */
 function CharmGlyph({ charm }: { charm: Charm }) {
   if (charm.image) {
-    // eslint-disable-next-line @next/next/no-img-element
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={`${BASE_PATH}${charm.image}`}
         alt={charm.name}
