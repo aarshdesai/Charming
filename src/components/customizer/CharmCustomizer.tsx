@@ -108,6 +108,14 @@ export function CharmCustomizer() {
     if (!over) return;
 
     const overId = over.id as string;
+
+    // Dragging a placed charm back onto the palette removes it.
+    if (overId.startsWith("palette-drop-")) {
+      const aid = active.id as string;
+      if (aid.startsWith("slot-")) removeCharm(parseInt(aid.replace("slot-", ""), 10));
+      return;
+    }
+
     if (!overId.startsWith("slot-")) return;
 
     const slotIndex = parseInt(overId.replace("slot-", ""), 10);

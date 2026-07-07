@@ -163,11 +163,17 @@ function HangSlot({
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             transition={{ type: "spring", stiffness: 500, damping: 20 }}
+            // Stop pointerdown here: the slot wrapper holds dnd-kit's drag
+            // listeners, and a slightly-moving press would start a drag
+            // instead of delivering the click.
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
-            className="absolute top-4 right-0 w-6 h-6 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-30"
+            className="absolute top-1 -right-3 w-11 h-11 z-30 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
             aria-label={`Remove ${charm.name}`}
           >
-            <X size={11} weight="bold" />
+            <span className="w-6 h-6 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center shadow-sm">
+              <X size={11} weight="bold" />
+            </span>
           </motion.button>
         )}
       </AnimatePresence>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useDraggable } from "@dnd-kit/core";
+import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { motion, useReducedMotion } from "motion/react";
 import { CHARMS, CATEGORY_LABELS, CATEGORY_ORDER, type Charm } from "@/lib/charms";
 
@@ -107,12 +107,32 @@ interface PaletteProps {
 export function CharmPalette({ activeId, onSelect, full, variant }: PaletteProps) {
   const groups = byCategory();
 
+  // Drop zone: dragging a placed charm back onto the palette removes it.
+  const removing = activeId?.startsWith("slot-") ?? false;
+  const { setNodeRef: setDropRef, isOver } = useDroppable({ id: `palette-drop-${variant}` });
+  const dropHint = removing
+    ? isOver
+      ? "Release to remove"
+      : "Drop here to remove"
+    : null;
+
   /* Desktop sidebar: vertical, grouped grid */
   if (variant === "sidebar") {
     return (
-      <aside className="hidden md:flex flex-col border-r border-[#123718]/10 overflow-y-auto">
+      <aside
+        ref={setDropRef}
+        className={`hidden md:flex flex-col border-r overflow-y-auto transition-colors duration-150 ${
+          removing && isOver ? "border-[#882121]/40 bg-[#882121]/10" : "border-[#123718]/10"
+        }`}
+      >
         <div className="px-5 py-5 border-b border-[#123718]/10">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#123718]/40">Charms</p>
+          <p
+            className={`text-[10px] uppercase tracking-[0.2em] ${
+              dropHint ? "text-[#882121]" : "text-[#123718]/40"
+            }`}
+          >
+            {dropHint ?? "Charms"}
+          </p>
         </div>
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
           {groups.map(({ cat, charms }) => (
@@ -141,10 +161,19 @@ export function CharmPalette({ activeId, onSelect, full, variant }: PaletteProps
 
   /* Mobile tray: horizontal-scroll rows by category */
   return (
-    <div className="md:hidden border-t border-[#123718]/10 bg-[#FFFAF4]/40">
+    <div
+      ref={setDropRef}
+      className={`md:hidden border-t transition-colors duration-150 ${
+        removing && isOver ? "border-[#882121]/40 bg-[#882121]/10" : "border-[#123718]/10 bg-[#FFFAF4]/40"
+      }`}
+    >
       <div className="px-4 pt-4 pb-1 flex items-center justify-between">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[#123718]/40">
-          {full ? "All slots full" : "Tap a charm to add"}
+        <p
+          className={`text-[10px] uppercase tracking-[0.2em] ${
+            dropHint ? "text-[#882121]" : "text-[#123718]/40"
+          }`}
+        >
+          {dropHint ?? (full ? "All slots full" : "Tap a charm to add")}
         </p>
       </div>
       <div className="pb-4 space-y-3">
