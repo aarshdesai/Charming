@@ -123,7 +123,7 @@ function HangSlot({
       style={{ left: `${x * 100}%`, top: `${y * 100}%`, width: size, ...dragStyle }}
       className={`
         absolute flex flex-col items-center group pointer-events-none
-        ${isDragging ? "opacity-30 z-30" : "z-20"}
+        ${isDragging ? "opacity-30 z-30" : "z-20 hover:z-40 focus-within:z-40"}
         select-none
       `}
     >
@@ -175,7 +175,11 @@ function HangSlot({
             // instead of delivering the click.
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
-            className="pointer-events-auto absolute top-1 -right-3 w-11 h-11 z-30 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+            // Top-center: adjacent slots overlap ~27px into each side of this
+            // one, so corner placements sit inside a neighbor's hit box. The
+            // center strip is the only neighbor-free zone — critical for touch,
+            // where there's no hover to raise the slot first.
+            className="pointer-events-auto absolute -top-3 left-1/2 -ml-[22px] w-11 h-11 z-30 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
             aria-label={`Remove ${charm.name}`}
           >
             <span className="w-6 h-6 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center shadow-sm">
