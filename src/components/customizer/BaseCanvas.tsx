@@ -114,16 +114,17 @@ function HangSlot({
     : { transform: "translate(-50%, 0)" };
 
   return (
+    // pointer-events-none on the wrapper: slot wrappers are wide overlapping
+    // circles, and a later sibling would otherwise swallow clicks meant for
+    // this slot's charm or X. Only the charm body and the X re-enable events;
+    // drop detection is rect-based in dnd-kit, so empty slots don't need any.
     <div
       ref={setRef}
-      {...(charm ? listeners : {})}
-      {...(charm ? attributes : {})}
       style={{ left: `${x * 100}%`, top: `${y * 100}%`, width: size, ...dragStyle }}
       className={`
-        absolute flex flex-col items-center group
-        ${charm ? "md:cursor-grab md:active:cursor-grabbing" : ""}
+        absolute flex flex-col items-center group pointer-events-none
         ${isDragging ? "opacity-30 z-30" : "z-20"}
-        touch-none select-none
+        select-none
       `}
     >
       {/* small clasp ring that hooks onto the chain */}
@@ -137,7 +138,13 @@ function HangSlot({
 
       <AnimatePresence mode="popLayout">
         {charm ? (
-          <motion.div key={charm.id} exit={{ opacity: 0, scale: 0.6, transition: { duration: 0.15 } }}>
+          <motion.div
+            key={charm.id}
+            exit={{ opacity: 0, scale: 0.6, transition: { duration: 0.15 } }}
+            {...listeners}
+            {...attributes}
+            className="pointer-events-auto touch-none md:cursor-grab md:active:cursor-grabbing"
+          >
             <HangingCharm charm={charm} size={size} />
           </motion.div>
         ) : (
@@ -168,7 +175,7 @@ function HangSlot({
             // instead of delivering the click.
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
-            className="absolute top-1 -right-3 w-11 h-11 z-30 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+            className="pointer-events-auto absolute top-1 -right-3 w-11 h-11 z-30 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
             aria-label={`Remove ${charm.name}`}
           >
             <span className="w-6 h-6 rounded-full bg-[#882121] text-[#F3E8DC] flex items-center justify-center shadow-sm">
